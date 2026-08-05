@@ -1,0 +1,195 @@
+# WMS v4.4 Configuration
+# Business Rules, RBAC, and Forecasting Settings
+
+system:
+  name: "Quantum Warehouse v4.4"
+  version: "4.4.0"
+  timezone: "UTC"
+  debug: false
+  max_sessions: 100
+  session_ttl_hours: 8
+
+rules:
+  - id: "R001"
+    name: "High Value Alert"
+    condition: "order_value > 1000"
+    action: "flag_review:High value order requires approval"
+    priority: 1
+    active: true
+    metadata:
+      category: "risk"
+      notify: ["manager", "admin"]
+
+  - id: "R002"
+    name: "Low Stock Hold"
+    condition: "stock < reorder_point"
+    action: "hold_order:Insufficient stock"
+    priority: 1
+    active: true
+    metadata:
+      category: "inventory"
+      auto_replenish: true
+
+  - id: "R003"
+    name: "Express Route"
+    condition: "service_type == 'EXPRESS'"
+    action: "set_priority:URGENT"
+    priority: 2
+    active: true
+    metadata:
+      category: "routing"
+      zone_preference: "A"
+
+  - id: "R004"
+    name: "Damaged Flag"
+    condition: "quality_score < 0.5"
+    action: "flag_review:Quality check failed"
+    priority: 1
+    active: true
+    metadata:
+      category: "quality"
+      quarantine: true
+
+  - id: "R005"
+    name: "VIP Customer"
+    condition: "customer_tier == 'PLATINUM'"
+    action: "set_priority:HIGH"
+    priority: 2
+    active: true
+    metadata:
+      category: "customer"
+      dedicated_picker: true
+
+  - id: "R006"
+    name: "Auto Approve Small"
+    condition: "order_value < 50 and customer_tier == 'GOLD'"
+    action: "auto_approve:true"
+    priority: 3
+    active: true
+    metadata:
+      category: "automation"
+
+  - id: "R007"
+    name: "Cold Chain Check"
+    condition: "category == 'FOOD' and temperature > 5"
+    action: "alert:Cold chain breach detected"
+    priority: 1
+    active: true
+    metadata:
+      category: "compliance"
+
+  - id: "R008"
+    name: "Hazmat Separation"
+    condition: "hazmat_class != '' and zone == 'A'"
+    action: "route_zone:D"
+    priority: 1
+    active: true
+    metadata:
+      category: "safety"
+
+rbac:
+  roles:
+    admin:
+      permissions:
+        - resource: "*"
+          action: "*"
+      description: "Full system access"
+
+    manager:
+      permissions:
+        - resource: "inventory"
+          action: "read"
+        - resource: "inventory"
+          action: "write"
+        - resource: "orders"
+          action: "read"
+        - resource: "orders"
+          action: "write"
+        - resource: "reports"
+          action: "read"
+        - resource: "users"
+          action: "read"
+        - resource: "settings"
+          action: "read"
+      description: "Warehouse manager"
+
+    operator:
+      permissions:
+        - resource: "inventory"
+          action: "read"
+        - resource: "inventory"
+          action: "write"
+        - resource: "orders"
+          action: "read"
+        - resource: "orders"
+          action: "write"
+        - resource: "picking"
+          action: "execute"
+        - resource: "packing"
+          action: "execute"
+      description: "Floor operator"
+
+    viewer:
+      permissions:
+        - resource: "inventory"
+          action: "read"
+        - resource: "orders"
+          action: "read"
+        - resource: "reports"
+          action: "read"
+      description: "Read-only access"
+
+forecasting:
+  default_model: "ensemble"
+  horizon_days: 30
+  season_length: 7
+  confidence_level: 0.95
+  models:
+    ets:
+      alpha: 0.3
+      beta: 0.1
+      gamma: 0.1
+      weight: 0.4
+    sarima:
+      p: 1
+      d: 1
+      q: 1
+      P: 1
+      D: 1
+      Q: 1
+      m: 7
+      weight: 0.4
+    naive:
+      weight: 0.2
+
+ai_engine:
+  algorithms:
+    - simulated_annealing
+    - genetic_algorithm
+    - tabu_search
+    - ant_colony
+  ensemble_mode: "balanced"
+  default_iterations:
+    sa: 2000
+    ga: 100
+    tabu: 500
+    aco: 80
+
+floor_ops:
+  wave_max_size: 50
+  pick_face_capacity: 50
+  replenishment_trigger: 0.2
+  andon_auto_escalate_min: 15
+
+notifications:
+  email:
+    enabled: true
+    smtp_host: "smtp.example.com"
+    smtp_port: 587
+    from_address: "wms@warehouse.com"
+  slack:
+    enabled: false
+    webhook_url: ""
+  sms:
+    enabled: false
+    provider: "twilio"

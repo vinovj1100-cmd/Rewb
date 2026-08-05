@@ -1,107 +1,143 @@
-# Secure Wildberries Supplier Orders Fetcher
+# 🏭 WMS v4.4 — Quantum Warehouse Management System
 
-A production-oriented Python utility that retrieves order data from the official Wildberries Statistics API (`/api/v1/supplier/orders`). It provides both a command-line interface and a Streamlit web interface suitable for Streamlit Community Cloud.
+**Version:** 4.4.0  
+**License:** Proprietary  
+**Python:** 3.11+
 
-## Key Improvements over the Original Script
+---
 
-| Area | Original Issue | Enhancement |
-|------|----------------|-------------|
-| Syntax | `if name == "__main__"` (NameError) | Corrected to `if __name__ == "__main__"` |
-| Authentication | Basic presence check | Length validation; token never logged |
-| Time zone | UTC with trailing Z | Moscow time (Europe/Moscow) as required by the API |
-| Pagination | Single request only | Automatic cursor-based pagination using `lastChangeDate` (flag=0) |
-| Rate limits | Fixed 0.5 s sleep | Respects 429 + `Retry-After` / `X-Ratelimit-Retry`; 61 s inter-page delay |
-| Retries | None | Exponential backoff + jitter via `tenacity` (5 attempts) |
-| Logging | `print` statements | Structured logging; credentials never emitted |
-| File security | World-readable Excel | Output directory `0o700`, files `0o600` |
-| TLS | Default | Explicit `session.verify = True` |
-| User-Agent | Absent | Identifies the client for support diagnostics |
-| Columns | Limited mapping | Includes recommended `srid`, `gNumber`, price fields, cancellation data |
-| Configuration | Hard-coded 30 days | Fully configurable via environment variables / Streamlit Secrets |
-| Error handling | Minimal | Distinct handling for 401/403/429/5xx |
-| Deployment | CLI only | Streamlit web UI (`app.py`) ready for Community Cloud |
+## 📋 Overview
 
-## Important: Streamlit Cloud Dependency Files
+Quantum WMS v4.4 is an enterprise-grade warehouse management system featuring:
 
-| File | Purpose on Streamlit Cloud |
-|------|----------------------------|
-| **`requirements.txt`** | Python packages installed with **pip** (streamlit, requests, pandas, …) |
-| **`packages.txt`** | System packages installed with **apt-get** (leave empty unless you need native libraries) |
+- 🤖 **Quantum AI Engine** — Multi-algorithm optimization (SA, GA, Tabu, ACO + Ensemble)
+- 🏷️ **WB Label Processor** — Enhanced vertical text detection and barcode parsing
+- 📊 **Advanced Forecasting** — ETS, SARIMA, and Ensemble demand forecasting
+- 🛡️ **Guardian** — Real-time system health monitoring
+- 🤖 **Copilot** — Natural language analytics interface
+- ⚡ **Realtime Event Bus** — Pub/sub event system
+- 🔐 **RBAC + Audit Trail** — Hash-chained immutable audit logs
+- 📄 **Report Generator** — PDF, Excel, CSV export
+- ⚙️ **YAML-driven Rules** — Configurable business rules engine
+- 🔄 **Offline Sync** — Queue-based disconnected operation support
 
-The previous error occurred because Python package names were placed in `packages.txt`. That file is reserved for APT packages only.
+---
 
-## Prerequisites
-
-- Python 3.9+
-- A Wildberries API token with the **Statistics** category enabled  
-  (Seller Portal → Profile → Settings → API Access)
-
-## Local Installation
+## 🚀 Quick Start
 
 ```bash
-cd wb_orders_project
-python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and set WB_API_TOKEN=...
+# 1. Install dependencies
+pip install -r requirements_v44.txt
+
+# 2. Launch the application
+streamlit run app_v44.py
+
+# 3. Login with demo credentials
+#    admin / admin  (full access)
+#    operator / operator  (floor access)
 ```
 
-### Run as CLI
+---
+
+## 📁 Package Structure
+
+```
+wms_v44/
+├── app_v44.py                 # Main Streamlit application
+├── quantum_ai_engine.py       # AI optimization engine
+├── wb_label_processor.py      # Label/barcode processing
+├── db.py                      # Database layer (SQLite)
+├── workflow_engine.py         # State machine workflows
+├── rule_engine.py             # YAML-driven business rules
+├── rbac_engine.py             # Role-based access control
+├── audit_trail.py             # Hash-chained audit logs
+├── advanced_forecasting.py    # Time series forecasting
+├── report_generator.py        # PDF/Excel/CSV reports
+├── floor_ops.py               # Pick/pack/putaway/andon
+├── efficiency.py              # Wave planning, slotting, KPIs
+├── guardian.py                # System health monitoring
+├── dashboard.py               # Guardian renderer
+├── copilot.py                 # Natural language analytics
+├── realtime.py                # Event bus
+├── sync.py                    # Offline queue
+├── memory.py                  # Settings and aliases
+├── seed_data.py               # Demo data generator
+├── integrations.py            # ERP/TMS/EDI connectors
+├── config.yaml                # System configuration
+├── requirements_v44.txt       # Python dependencies
+└── structured_data/           # JSON schemas and data
+```
+
+---
+
+## 🔧 Modules
+
+### Quantum AI Engine
+Multi-algorithm task/resource optimization:
+- **Simulated Annealing** — Global search with temperature cooling
+- **Genetic Algorithm** — Population-based evolution
+- **Tabu Search** — Local search with memory
+- **Ant Colony** — Pheromone-based pathfinding
+- **Ensemble** — Weighted vote aggregation
+
+### WB Label Processor
+- OCR text normalization
+- Vertical text detection and reconstruction
+- Multi-carrier tracking extraction (DHL, FedEx, UPS, USPS, Amazon)
+- Confidence scoring and anomaly detection
+
+### Advanced Forecasting
+- **ETS** (Error-Trend-Seasonality) with Holt-Winters
+- **SARIMA** for seasonal autoregressive models
+- **Naive** baseline
+- **Ensemble** weighted combination
+
+### Guardian Health Monitor
+- Service latency tracking
+- Resource utilization (CPU, Memory, Disk, DB connections)
+- Alert generation and escalation
+- Dashboard rendering
+
+---
+
+## 🔐 Security
+
+- SHA-256 password hashing
+- Session-based authentication with TTL
+- Role-based access control (Admin, Manager, Operator, Viewer)
+- Hash-chained audit trail (tamper-evident)
+- Rule-based data validation
+
+---
+
+## 📊 Demo Data
+
+Run seeding to populate the database:
+
+```python
+from db import Database
+from seed_data import SeedData
+
+db = Database()
+seed = SeedData()
+stats = seed.seed_database(db)
+print(f"Seeded: {stats}")
+```
+
+---
+
+## 🧪 Testing
+
 ```bash
-python wb_orders_fetcher.py
+pytest tests/
 ```
 
-### Run as Streamlit app (local)
-```bash
-streamlit run app.py
-```
+---
 
-## Streamlit Community Cloud Deployment
+## 📞 Support
 
-1. Push the repository to GitHub.
-2. In the Streamlit Cloud dashboard set:
-   - **Main file path**: `app.py`
-3. Add the secret:
-   - Settings → Secrets → paste:
-     ```toml
-     WB_API_TOKEN = "your_actual_token_here"
-     ```
-4. Ensure the repository contains:
-   - `requirements.txt` (Python packages)
-   - `packages.txt` (empty or only real APT packages)
-   - `app.py` (Streamlit entry point)
-   - `wb_orders_fetcher.py` (core logic)
+For support, contact: support@quantum-wms.com
 
-## Configuration
+---
 
-| Variable / Secret | Default | Description |
-|-------------------|---------|-------------|
-| `WB_API_TOKEN`    | —       | Required. Statistics-category token |
-| `DAYS_BACK`       | 30      | Look-back window (1–90) – CLI only |
-| `FLAG`            | 0       | 0 = incremental / paginated; 1 = full day – CLI only |
-| `OUTPUT_DIR`      | ./output| Excel output directory – CLI only |
-| `LOG_LEVEL`       | INFO    | Logging level – CLI only |
-
-In the Streamlit UI the look-back period and flag are controlled by sidebar widgets.
-
-## Security Notes
-
-- Never commit a real `.env` or token to the repository.
-- On Streamlit Cloud always use **Secrets** management.
-- The core library never logs the token value.
-- TLS verification is enforced on every request.
-
-## API Behaviour Summary
-
-- Endpoint: `GET https://statistics-api.wildberries.ru/api/v1/supplier/orders`
-- Data refreshed approximately every 30 minutes.
-- Retention: up to 90 days.
-- `flag=0` (default): records where `lastChangeDate >= dateFrom` (max ~80 000 rows). Subsequent pages advance `dateFrom`.
-- `flag=1`: all orders whose order date equals the calendar day of `dateFrom`.
-- Recommended unique identifier: `srid`.
-- Typical rate limit: 1 request per minute.
-
-## Licence
-
-Reference implementation for educational and internal operational use. Comply with Wildberries API Terms of Service and applicable data-protection regulations.
+*Built with ❤️ for modern warehouse operations.*

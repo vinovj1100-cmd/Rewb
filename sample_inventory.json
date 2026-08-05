@@ -1,0 +1,72 @@
+[
+  {
+    "sku": "ELEC-1000",
+    "name": "Wireless Mouse",
+    "location": "A-01",
+    "quantity": 145,
+    "reserved": 20,
+    "reorder_point": 15,
+    "max_stock": 500,
+    "unit_cost": 24.99,
+    "category": "Electronics",
+    "zone": "A",
+    "aisle": "A1",
+    "bin": "01"
+  },
+  {
+    "sku": "MECH-1001",
+    "name": "Hydraulic Pump",
+    "location": "B-12",
+    "quantity": 23,
+    "reserved": 5,
+    "reorder_point": 10,
+    "max_stock": 200,
+    "unit_cost": 189.5,
+    "category": "Mechanical",
+    "zone": "B",
+    "aisle": "B3",
+    "bin": "12"
+  },
+  {
+    "sku": "TEXT-1002",
+    "name": "Cotton T-Shirt",
+    "location": "C-05",
+    "quantity": 340,
+    "reserved": 50,
+    "reorder_point": 30,
+    "max_stock": 1000,
+    "unit_cost": 12.99,
+    "category": "Textiles",
+    "zone": "C",
+    "aisle": "C1",
+    "bin": "05"
+  },
+  {
+    "sku": "FOOD-1003",
+    "name": "Organic Coffee Beans",
+    "location": "A-20",
+    "quantity": 89,
+    "reserved": 10,
+    "reorder_point": 20,
+    "max_stock": 300,
+    "unit_cost": 18.75,
+    "category": "Food",
+    "zone": "A",
+    "aisle": "A4",
+    "bin": "20"
+  },
+  {
+    "sku": "AUTO-1004",
+    "name": "Brake Pad Set",
+    "location": "D-08",
+    "quantity": 56,
+    "reserved": 8,
+    "reorder_point": 12,
+    "max_stock": 250,
+    "unit_cost": 45.0,
+    "category": "Automotive",
+    "zone": "D",
+    "aisle": "D2",
+    "bin": "08"
+  }
+]
