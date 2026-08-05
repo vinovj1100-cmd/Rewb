@@ -1,7 +1,8 @@
-streamlit
-requests
-pandas
-openpyxl
-python-dotenv
-tenacity
-tzdata
+# WMS v4.4 System Dependencies (apt-get)
+# Only list actual system packages here, NOT Python packages
+# Leave empty if no system packages are needed
+# Examples (uncomment if needed):
+# libgl1
+# tesseract-ocr
+# libtesseract-dev
+
