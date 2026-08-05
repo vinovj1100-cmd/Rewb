@@ -1,3 +1,0 @@
-# System (APT) packages required by Streamlit Cloud.
-# Leave empty unless native libraries (e.g. libgl1, ffmpeg) are needed.
-# Python packages belong in requirements.txt only.
